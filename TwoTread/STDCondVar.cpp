@@ -13,7 +13,6 @@ void yellow()
 	std::unique_lock<std::mutex> lk(cv_m);
 	std::cout << "yellow \n";
 	cv.wait(lk, [] {return i == 1; });
-//	std::cout << "...finished waiting. i == 1\n";
 	done = true;
 }
 
@@ -21,18 +20,17 @@ void green()
 {
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 	std::cout << "green";
-	cv.notify_one(); // waiting thread is notified with i == 0.
-					 // cv.wait wakes up, checks i, and goes back to waiting
+	cv.notify_one();
 
-	std::unique_lock<std::mutex> lk(cv_m);
+	std::unique_lock<std::mutex> lock(cv_m);
 	i = 1;
-	while (!done)
-	{
-		lk.unlock();
-		cv.notify_one(); // waiting thread is notified with i == 1, cv.wait returns
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-		lk.lock();
-	}
+	//while (!done)
+	//{
+	//	lock.unlock();
+	//	cv.notify_one();
+	//	std::this_thread::sleep_for(std::chrono::seconds(1));
+	//	lock.lock();
+	//}
 }
 
 int main()
@@ -41,12 +39,17 @@ int main()
 	int w;
 	std::thread t1(yellow), t2(green);
 	for (int j = 0; j < length; j++)
-	{	std::thread t1(yellow);
-	for (int k = 0; k < length; k++)
 	{
-		std::thread t2(green);
+		std::thread t1(yellow);
+		for (int k = 0; k < length; k++)
+		{
+			std::thread t2(green);
+		}
 	}
-	}
+	//	else
+	//	{
+	//	
+	//}
 
 	t1.join();
 	t2.join();
