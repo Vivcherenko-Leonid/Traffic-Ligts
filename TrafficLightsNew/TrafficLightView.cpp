@@ -6,7 +6,7 @@ TrafficLightView::TrafficLightView()
 	: flag(true)
 	, signals {{ "RED",    4,   true }, { "Yellow", 5,   false }, { "Green",  6,   true }}
 {
-	std::async(std::launch::async, &TrafficLightView::view, this);
+	std::async(std::launch::async, &TrafficLightView::view);
 }
 
 
